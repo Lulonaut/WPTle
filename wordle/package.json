@@ -1,7 +1,7 @@
 {
   "name": "wptle",
   "description": "Wordle with german RNAV waypoints.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "private": "true",
   "license": "GPL-3.0",
