@@ -327,7 +327,7 @@ export class GameState extends Storable {
 }
 
 export class Settings extends Storable {
-	public hard = new Array(modeData.modes.length).fill(false);
+	public hard = new Array(modeData.modes.length).fill(true);
 	public dark = true;
 	public colorblind = false;
 
