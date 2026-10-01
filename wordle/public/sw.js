@@ -6,8 +6,8 @@ const cacheName = `wptle-v${version}`;
 const assetsToCache = [
 	"./",
 	"./index.html",
-	`./index-${version}.css`,
-	`./index-${version}.js`,
+	`./index-v${version}.css`,
+	`./index-v${version}.js`,
 	"./global.css",
 ];
 
