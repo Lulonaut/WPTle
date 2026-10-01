@@ -39,7 +39,7 @@
 		flex-grow: 1.5;
 	}
 	.⬛ {
-		background: var(--color-absent);
+		background: var(--bg-secondary);
 	}
 	.🟨 {
 		background: var(--color-present);
