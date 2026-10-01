@@ -1,0 +1,39 @@
+{
+  "name": "wptle",
+  "description": "Wordle with german RNAV waypoints.",
+  "version": "1.0.0",
+  "type": "module",
+  "private": "true",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lulonaut/WPTle.git"
+  },
+  "keywords": [],
+  "author": "Lulonaut",
+  "contributors": [
+    "MikhaD (original wordle)"
+  ],
+  "bugs": {
+    "url": "https://github.com/Lulonaut/WPTle/issues"
+  },
+  "homepage": "https://wptle.lulonaut.dev",
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/seedrandom": "^3.0.8",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.6",
+    "tslib": "^2.8.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2",
+    "sass": "^1.105.1",
+    "seedrandom": "^3.0.5"
+  }
+}
