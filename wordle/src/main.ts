@@ -5,7 +5,7 @@ import App from "./App.svelte";
 const app = mount(App, {
 	target: document.body,
 	props: {
-		version: "1.0.2",
+		version: "1.0.3",
 		AIRAC: "2610"
 	}
 });
