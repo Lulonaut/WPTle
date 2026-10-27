@@ -232,9 +232,12 @@
 	{/if}
 
 	<svelte:fragment slot="footer">
-		<a href="https://www.nytimes.com/games/wordle/" target="_blank" rel="noreferrer"
-			>Original Wordle</a
-		>
+		<div class="originals">
+			<a href="https://wptle.de/" target="_blank" rel="noreferrer">Original WPTle</a>
+			<a href="https://www.nytimes.com/games/wordle/" target="_blank" rel="noreferrer"
+				>Original Wordle</a
+			>
+		</div>
 		<div>
 			<div>v{version}</div>
 			<div>Based on AIRAC {AIRAC}</div>
@@ -309,5 +312,12 @@
 	}
 	.concede {
 		background-color: var(--red);
+	}
+	.originals {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		text-align: start;
 	}
 </style>

@@ -327,6 +327,7 @@ export class GameState extends Storable {
 }
 
 export class Settings extends Storable {
+	// Hard mode is on by default for every game mode.
 	public hard = new Array(modeData.modes.length).fill(true);
 	public dark = true;
 	public colorblind = false;
@@ -335,7 +336,11 @@ export class Settings extends Storable {
 		super();
 		if (settings) {
 			const parsed = JSON.parse(settings) as Settings;
-			this.hard = parsed.hard;
+			// Keep saved choices, but make sure every mode has a value. Modes
+			// added after the settings were saved default to hard mode.
+			this.hard = new Array(modeData.modes.length)
+				.fill(true)
+				.map((defaultValue, i) => parsed.hard?.[i] ?? defaultValue);
 			this.dark = parsed.dark;
 			this.colorblind = parsed.colorblind;
 		}
