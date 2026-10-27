@@ -95,6 +95,7 @@
 			<a href="https://github.com/Lulonaut/WPTle/issues" target="_blank" rel="noreferrer">
 				Report a Bug
 			</a>
+			<a href="mailto:wptle@lulonaut.dev">wptle@lulonaut.dev</a>
 		</div>
 	</div>
 </div>

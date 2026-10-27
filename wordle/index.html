@@ -21,9 +21,18 @@
 	<meta property="og:title" content="WPTle">
 
 	<script>
-		// PWA Service worker
-		if (document.location.origin === "https://wptle.lulonaut.dev") {
-			if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+		// WPTle no longer uses a service worker. Unregister any worker left
+		// behind by an older version and delete its caches so they can never
+		// serve stale assets. Runs on every origin, including development.
+		if ("serviceWorker" in navigator) {
+			navigator.serviceWorker.getRegistrations()
+				.then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+				.catch(() => { });
+		}
+		if ("caches" in window) {
+			caches.keys()
+				.then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+				.catch(() => { });
 		}
 	</script>
 
