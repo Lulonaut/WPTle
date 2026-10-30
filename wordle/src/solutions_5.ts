@@ -72,7 +72,7 @@ const solutions = [
   "galma",
   "ogber",
   "sonal",
-  // Current STAR namesake waypoints (AIRAC 2610)
+  // Current STAR namesake waypoints (AIRAC 2611)
   // EDDF
   "debhi",
   "dixat",
