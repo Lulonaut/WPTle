@@ -6,6 +6,8 @@
 
 	export let value = "";
 	export let disabled = false;
+	/** Visually indicate that the keyboard is inactive without blocking input handling. */
+	export let dimmed = false;
 	let preventChange = true;
 
 	const dispatch = createEventDispatcher();
@@ -44,7 +46,7 @@
 
 <svelte:body on:keydown={handleKeystroke} />
 
-<div class:preventChange class:disabled class="keyboard">
+<div class:preventChange class:dimmed class="keyboard">
 	<div class="row">
 		{#each keys[0] as letter}
 			<Key
@@ -90,7 +92,7 @@
 		align-items: center;
 		margin-bottom: 2px;
 	}
-	.keyboard.disabled {
+	.keyboard.dimmed {
 		opacity: 0.4;
 		filter: grayscale(0.6);
 	}

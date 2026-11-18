@@ -50,6 +50,18 @@
 	let showStats = false;
 	let showHistorical = false;
 	let showRefresh = false;
+	// Delay the finished-game panel so it does not replace the keyboard while the last row is still
+	// being revealed. It becomes visible together with the stats popup.
+	let showCompleted = !game.active;
+	let gameKey = `${$mode}-${game.wordNumber}`;
+	$: syncCompleted(`${$mode}-${game.wordNumber}`);
+
+	function syncCompleted(key: string) {
+		if (key !== gameKey) {
+			gameKey = key;
+			showCompleted = !game.active;
+		}
+	}
 
 	let board: Board;
 	let timer: Timer;
@@ -146,7 +158,10 @@
 	}
 
 	function setShowStatsTrue() {
-		if (!game.active) showStats = true;
+		if (!game.active) {
+			showCompleted = true;
+			showStats = true;
+		}
 	}
 
 	function onSwipe(e: Swipe) {
@@ -190,7 +205,7 @@
 		icon={modeData.modes[$mode].icon}
 		on:swipe={onSwipe}
 	/>
-	{#if !game.active && !modeData.modes[$mode].historical && $mode === GameMode.daily}
+	{#if showCompleted && !game.active && !modeData.modes[$mode].historical && $mode === GameMode.daily}
 		<div class="completed">
 			<p class="completed-title">You already completed today's WPTle</p>
 			<p class="completed-result">
@@ -206,7 +221,7 @@
 		</div>
 	{:else}
 		<div class="keyboard-wrap">
-			{#if !game.active && !modeData.modes[$mode].historical && $mode === GameMode.infinite}
+			{#if showCompleted && !game.active && !modeData.modes[$mode].historical && $mode === GameMode.infinite}
 				<div class="infinite-summary">
 					<span>
 						{#if game.lastWord === word}
@@ -227,6 +242,7 @@
 					showSettings = false;
 				}}
 				disabled={!game.active || showHistorical}
+				dimmed={showHistorical || (!game.active && showCompleted)}
 			/>
 		</div>
 	{/if}
