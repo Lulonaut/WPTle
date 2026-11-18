@@ -8,6 +8,7 @@
 
 	export let showStats: boolean;
 	export let showRefresh: boolean;
+	export let active = true;
 
 	export let toaster = getContext<Toaster>("toaster");
 
@@ -21,6 +22,9 @@
 
 <header>
 	<div class="icons">
+		{#if active}
+			<button class="give-up" on:click={() => dispatch("giveup")}>give up</button>
+		{/if}
 		{#if showRefresh}
 			<GameIcon onClick={() => dispatch("reload")}>
 				<path
@@ -41,7 +45,8 @@
 			toaster.pop(modeData.modes[$mode].name);
 		}}
 	>
-		WPTle
+		<span class="title">WPTle</span>
+		<span class="disclaimer">Currently only Germany is supported</span>
 	</h1>
 	<div class="icons">
 		{#if showStats}
@@ -79,13 +84,43 @@
 		z-index: 1;
 		display: flex;
 	}
+	.give-up {
+		align-self: center;
+		font: inherit;
+		font-size: var(--fs-tiny);
+		letter-spacing: 0.05rem;
+		text-transform: uppercase;
+		color: var(--fg-secondary);
+		background: transparent;
+		border: 0;
+		padding: 8px 12px;
+		cursor: pointer;
+	}
+	.give-up:hover {
+		color: var(--red);
+	}
 	h1 {
 		position: absolute;
 		width: max-content;
 		left: 50%;
 		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1px;
+		line-height: 1;
 		font-size: var(--fs-large);
 		cursor: pointer;
 		text-align: center;
+	}
+	.disclaimer {
+		font-size: 9px;
+		font-weight: 400;
+		letter-spacing: normal;
+		color: var(--fg-secondary);
+	}
+	.title,
+	.disclaimer {
+		pointer-events: none;
 	}
 </style>

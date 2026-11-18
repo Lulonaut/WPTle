@@ -4,7 +4,7 @@
 	import { Board } from "./board";
 	import Keyboard from "./keyboard";
 	import Modal from "./Modal.svelte";
-	import { getContext, onMount, setContext } from "svelte";
+	import { getContext, setContext } from "svelte";
 	import Settings from "./settings";
 	import {
 		Share,
@@ -32,6 +32,7 @@
 		Stats,
 	} from "../utils";
 	import { letterStates, settings, mode } from "../stores";
+	import { GameMode } from "../enums";
 
 	export let word: string;
 	export let stats: Stats;
@@ -91,6 +92,7 @@
 	function win() {
 		board.bounce(game.guesses - 1);
 		game.active = false;
+		game = game;
 		setTimeout(
 			() => toaster.pop(PRAISE[game.guesses - 1]),
 			DELAY_INCREMENT * COLS + DELAY_INCREMENT
@@ -105,6 +107,7 @@
 
 	function lose() {
 		game.active = false;
+		game = game;
 		setTimeout(setShowStatsTrue, delay);
 		if (!modeData.modes[$mode].historical) {
 			stats.addLoss(modeData.modes[$mode]);
@@ -130,6 +133,18 @@
 		timer.reset($mode);
 	}
 
+	function resetInfinite() {
+		// Use the current millisecond as the seed so resetting within the same second still yields a
+		// different word instead of reusing the one that was just played.
+		modeData.modes[$mode].seed = Date.now();
+		game = new GameState($mode);
+		word = words.words[seededRandomInt(0, words.words.length, modeData.modes[$mode].seed)];
+		$letterStates = new LetterStates();
+		showStats = false;
+		showRefresh = false;
+		timer.reset($mode);
+	}
+
 	function setShowStatsTrue() {
 		if (!game.active) showStats = true;
 	}
@@ -147,9 +162,6 @@
 		}
 	}
 
-	onMount(() => {
-		if (!game.active) setTimeout(setShowStatsTrue, delay);
-	});
 	// $: toaster.pop(word);
 </script>
 
@@ -158,9 +170,11 @@
 <main class:guesses={game.guesses !== 0} style="--rows: {ROWS}; --cols: {COLS}">
 	<Header
 		bind:showRefresh
+		active={game.active}
 		showStats={stats.played > 0 || (modeData.modes[$mode].historical && !game.active)}
 		on:stats={() => (showStats = true)}
 		on:settings={() => (showSettings = true)}
+		on:giveup={concede}
 		on:reload={reload}
 	/>
 	<div class="modes">
@@ -176,18 +190,46 @@
 		icon={modeData.modes[$mode].icon}
 		on:swipe={onSwipe}
 	/>
-	<div class="keyboard-wrap">
-		<Keyboard
-			on:keystroke={() => board.hideCtx()}
-			bind:value={game.board.words[game.guesses === ROWS ? 0 : game.guesses]}
-			on:submitWord={submitWord}
-			on:esc={() => {
-				showStats = false;
-				showSettings = false;
-			}}
-			disabled={!game.active || showHistorical}
-		/>
-	</div>
+	{#if !game.active && !modeData.modes[$mode].historical && $mode === GameMode.daily}
+		<div class="completed">
+			<p class="completed-title">You already completed today's WPTle</p>
+			<p class="completed-result">
+				{#if game.lastWord === word}
+					Solved in {game.guesses} {game.guesses === 1 ? "guess" : "guesses"}
+				{:else}
+					Better luck next time
+				{/if}
+			</p>
+			<Definition {word} label="Today's word was" />
+			<Timer on:timeup={() => (showRefresh = true)} on:reload={reload} />
+			<button class="stats-link" on:click={() => (showStats = true)}>view statistics</button>
+		</div>
+	{:else}
+		<div class="keyboard-wrap">
+			{#if !game.active && !modeData.modes[$mode].historical && $mode === GameMode.infinite}
+				<div class="infinite-summary">
+					<span>
+						{#if game.lastWord === word}
+							Solved in {game.guesses} {game.guesses === 1 ? "guess" : "guesses"}
+						{:else}
+							The word was <strong>{word.toUpperCase()}</strong>
+						{/if}
+					</span>
+					<button class="reset-link" on:click={resetInfinite}>reset</button>
+				</div>
+			{/if}
+			<Keyboard
+				on:keystroke={() => board.hideCtx()}
+				bind:value={game.board.words[game.guesses === ROWS ? 0 : game.guesses]}
+				on:submitWord={submitWord}
+				on:esc={() => {
+					showStats = false;
+					showSettings = false;
+				}}
+				disabled={!game.active || showHistorical}
+			/>
+		</div>
+	{/if}
 </main>
 
 <Modal bind:visible={showStats}>
@@ -272,6 +314,57 @@
 	.keyboard-wrap {
 		width: 100%;
 		margin-top: auto;
+	}
+	.infinite-summary {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 12px;
+		padding: 8px 10px;
+		border-top: 1px solid var(--border-primary);
+		color: var(--fg-secondary);
+		font-size: var(--fs-small);
+	}
+	.reset-link {
+		font: inherit;
+		font-size: var(--fs-small);
+		color: var(--fg-primary);
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 999px;
+		padding: 4px 12px;
+		cursor: pointer;
+	}
+	.reset-link:hover {
+		border-color: var(--fg-secondary);
+	}
+	.completed {
+		width: 100%;
+		margin-top: auto;
+		padding: 16px 10px 4px;
+		text-align: center;
+		border-top: 1px solid var(--border-primary);
+	}
+	.completed-title {
+		font-weight: 700;
+		margin-bottom: 6px;
+	}
+	.completed-result {
+		color: var(--fg-secondary);
+		margin-bottom: 14px;
+	}
+	.stats-link {
+		font: inherit;
+		font-size: var(--fs-small);
+		color: var(--fg-secondary);
+		background: transparent;
+		border: 0;
+		text-decoration: underline;
+		cursor: pointer;
+		padding: 8px;
+	}
+	.stats-link:hover {
+		color: var(--fg-primary);
 	}
 	.modes {
 		display: flex;

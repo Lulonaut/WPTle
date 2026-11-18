@@ -44,7 +44,7 @@
 
 <svelte:body on:keydown={handleKeystroke} />
 
-<div class:preventChange class="keyboard">
+<div class:preventChange class:disabled class="keyboard">
 	<div class="row">
 		{#each keys[0] as letter}
 			<Key
@@ -89,6 +89,10 @@
 		flex-direction: column;
 		align-items: center;
 		margin-bottom: 2px;
+	}
+	.keyboard.disabled {
+		opacity: 0.4;
+		filter: grayscale(0.6);
 	}
 	.row {
 		touch-action: manipulation;
